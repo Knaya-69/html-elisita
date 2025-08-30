@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te Amo Eli</title>
+
+  <!-- Fuente Allura -->
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+  <!-- Enlace a CSS externo -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <h1>Te Amo Eli</h1>
+  <div class="flowers"></div>
+
+  <script>
+    /* =======================
+       🎇 Partículas Pastel
+    ======================= */
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pastelColors = [
+      "#FFD1DC", "#FFB7B2", "#FFDAC1", "#E2F0CB", 
+      "#B5EAD7", "#C7CEEA", "#FFF5BA"
+    ];
+
+    let particles = [];
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 4 + 2;
+        this.color = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.alpha = Math.random();
+        this.fade = (Math.random() * 0.02) + 0.005;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+        this.alpha += this.fade;
+        if (this.alpha <= 0.3 || this.alpha >= 1) {
+          this.fade *= -1;
+        }
+
+        this.draw();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => p.update());
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
+
+    /* =======================
+       🌸 Flores con click
+    ======================= */
+    const flowersContainer = document.querySelector('.flowers');
+    const flowerImgs = [
+      "foto1.png",
+      "foto2.png",
+      "foto3.png",
+    ]; 
+
+    document.addEventListener("click", (e) => {
+      const flower = document.createElement("img");
+      flower.src = flowerImgs[Math.floor(Math.random() * flowerImgs.length)];
+      flower.classList.add("flower");
+
+      flower.style.left = (e.clientX - 60) + "px"; 
+      flower.style.top = (e.clientY - 60) + "px"; 
+      flower.style.width = "120px"; 
+      flower.style.height = "120px";
+
+      flowersContainer.appendChild(flower);
+
+      setTimeout(() => {
+        flower.remove();
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
